@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Administrativo - Inmobiliaria TEM742{% endblock %}
+{% block header_title %}Dashboard Administrativo{% endblock %}
+
+{% block content %}
+<!-- KPI Cards Row -->
+<div class="row g-4 mb-4">
+    <!-- Total Propiedades -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="card custom-card card-kpi card-kpi-primary border-0 h-100">
+            <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="kpi-title">Total Inmuebles</div>
+                    <div class="kpi-value">{{ total_propiedades }}</div>
+                </div>
+                <div class="bg-light rounded-3 p-3 text-primary fs-3">
+                    <i class="fa-solid fa-hotel"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Propiedades Vendidas -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="card custom-card card-kpi card-kpi-danger border-0 h-100">
+            <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="kpi-title">Propiedades Vendidas</div>
+                    <div class="kpi-value">{{ total_vendidas }}</div>
+                </div>
+                <div class="bg-light rounded-3 p-3 text-danger fs-3">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ingresos Acumulados -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="card custom-card card-kpi card-kpi-success border-0 h-100">
+            <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="kpi-title">Monto Transacciones</div>
+                    <div class="kpi-value">{{ "{:,.2f}".format(suma_transacciones) }} Bs.</div>
+                </div>
+                <div class="bg-light rounded-3 p-3 text-success fs-3">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Precio Promedio -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="card custom-card card-kpi card-kpi-warning border-0 h-100">
+            <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="kpi-title">Precio Promedio</div>
+                    <div class="kpi-value">{{ "{:,.2f}".format(precio_promedio) }} Bs.</div>
+                </div>
+                <div class="bg-light rounded-3 p-3 text-warning fs-3">
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos Row -->
+<div class="row g-4 mb-4">
+    <!-- Distribución por Tipo (Dona) -->
+    <div class="col-12 col-lg-4">
+        <div class="card custom-card border-0 h-100">
+            <div class="card-body p-4">
+                <h6 class="fw-bold text-dark mb-4"><i class="fa-solid fa-chart-pie text-primary me-2"></i>Distribución por Tipo</h6>
+                <div class="chart-container">
+                    <canvas id="chartTipos"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Distribución por Estado (Barra Horizontal) -->
+    <div class="col-12 col-lg-4">
+        <div class="card custom-card border-0 h-100">
+            <div class="card-body p-4">
+                <h6 class="fw-bold text-dark mb-4"><i class="fa-solid fa-chart-column text-primary me-2"></i>Inmuebles por Estado</h6>
+                <div class="chart-container">
+                    <canvas id="chartEstados"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ventas vs Alquileres (Barra Vertical) -->
+    <div class="col-12 col-lg-4">
+        <div class="card custom-card border-0 h-100">
+            <div class="card-body p-4">
+                <h6 class="fw-bold text-dark mb-4"><i class="fa-solid fa-money-bill-trend-up text-primary me-2"></i>Ingresos (Venta vs Alquiler)</h6>
+                <div class="chart-container">
+                    <canvas id="chartTransacciones"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

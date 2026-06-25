@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}{{ propiedad.titulo }} - Inmobiliaria TEM742{% endblock %}
+{% block header_title %}Detalles del Inmueble{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-8">
+        <!-- Detalle principal -->
+        <div class="card custom-card border-0 mb-4">
+            <div class="position-relative bg-light text-center border-bottom d-flex align-items-center justify-content-center prop-detail-img">
+                <i class="fa-regular fa-image text-muted detail-img-icon"></i>
+                <!-- Badge de Acción (Alquiler o Venta) -->
+                <span class="position-absolute top-0 start-0 m-4 badge bg-dark custom-badge fs-6">
+                    {{ propiedad.accion }}
+                </span>
+                <!-- Badge del Estado (Disponible, Reservada, Alquilada, Vendida) -->
+                <span class="position-absolute top-0 end-0 m-4 badge custom-badge fs-6 
+                    {% if propiedad.estado.nombre_estado == 'Disponible' %}bg-success
+                    {% elif propiedad.estado.nombre_estado == 'Alquilada' %}bg-warning text-dark
+                    {% elif propiedad.estado.nombre_estado == 'Vendida' %}bg-danger
+                    {% elif propiedad.estado.nombre_estado == 'Reservada' %}bg-info
+                    {% else %}bg-secondary{% endif %}">
+                    {{ propiedad.estado.nombre_estado }}
+                </span>
+            </div>
+            
+            <div class="card-body p-5">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                    <span class="badge bg-primary text-uppercase px-3 py-2">{{ propiedad.tipo_propiedad.nombre_tipo }}</span>
+                    <h2 class="fw-bold text-primary mb-0">{{ "{:,.2f}".format(propiedad.precio) }} Bs.</h2>
+                </div>
+                
+                <h1 class="fw-bold text-dark mb-4">{{ propiedad.titulo }}</h1>
+                
+                <h5 class="fw-bold text-dark mb-2">Descripción del Inmueble</h5>
+                <p class="text-muted leading-relaxed mb-4">{{ propiedad.descripcion or 'El agente no ha cargado una descripción detallada para este inmueble.' }}</p>
+                
+                <hr class="my-4">
+                
+                <div class="row g-4">
+                    <div class="col-12 col-md-6">
+                        <h6 class="fw-bold text-muted mb-2"><i class="fa-solid fa-location-dot me-2 text-primary"></i>Ubicación</h6>
+                        <p class="text-dark mb-0">{{ propiedad.direccion }}</p>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <h6 class="fw-bold text-muted mb-2"><i class="fa-solid fa-calendar-days me-2 text-primary"></i>Fecha de Publicación</h6>
+                        <p class="text-dark mb-0">{{ propiedad.fecha_registro.strftime('%d/%m/%Y a las %H:%M') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-12 col-lg-4">
+        <!-- Contacto e Información Asignada -->
+        <div class="card custom-card border-0 mb-4 bg-white">
+            <div class="card-body p-4">
+                <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-user-tie text-primary me-2"></i>Agente Inmobiliario</h5>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center agent-avatar">
+                        <i class="fa-solid fa-user text-primary fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold text-dark mb-0">{{ propiedad.agente.nombre_completo }}</h6>
+                        <small class="text-muted">{{ propiedad.agente.correo }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Propietario (Sensible - Solo visible a Admin y Agente por RBAC) -->
+        <div class="card custom-card border-0 mb-4">
+            <div class="card-body p-4">
+                <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-key text-primary me-2"></i>Información del Propietario</h5>
+                {% if current_user.is_authenticated and current_user.rol.nombre_rol in ['Administrador', 'Agente'] %}
+                    <div class="alert alert-info py-2 px-3 small border-0 mb-3"><i class="fa-solid fa-circle-info me-2"></i>Información restringida para Clientes.</div>
+                    <p class="mb-1"><strong>Nombre:</strong> {{ propiedad.propietario.nombre }}</p>
+                    <p class="mb-1"><strong>CI/NIT:</strong> {{ propiedad.propietario.ci_nit }}</p>
+                    <p class="mb-1"><strong>Teléfono:</strong> {{ propiedad.propietario.telefono }}</p>
+                    <p class="mb-0"><strong>Correo:</strong> {{ propiedad.propietario.correo or 'No registrado' }}</p>
+                {% else %}
+                    <div class="text-center py-3 text-muted">
+                        <i class="fa-solid fa-lock fs-2 mb-2 text-danger"></i>
+                        <p class="small mb-0">Debes iniciar sesión como **Administrador** o **Agente** para ver la información de contacto del propietario.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Acciones del Catálogo -->
+        <div class="d-grid gap-2">
+            <a href="{{ url_for('propiedades.list_propiedades') }}" class="btn btn-outline-secondary w-100">
+                <i class="fa-solid fa-arrow-left me-2"></i>Volver al Catálogo
+            </a>
+            {% if current_user.is_authenticated and current_user.rol.nombre_rol in ['Administrador', 'Agente'] %}
+                <a href="{{ url_for('propiedades.edit_propiedad', id=propiedad.id) }}" class="btn btn-primary w-100">
+                    <i class="fa-solid fa-pen-to-square me-2"></i>Editar Propiedad
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

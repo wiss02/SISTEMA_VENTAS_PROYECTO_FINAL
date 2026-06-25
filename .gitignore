@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*$py.class
+inmobiliaria.db
+.env
+.venv/
+env/
+venv/
+instance/
+.pytest_cache/
+.vscode/
+.idea/

@@ -1,0 +1,286 @@
+/* Estilos Personalizados - Inmobiliaria TEM742 */
+:root {
+    --primary-color: #1e3c72;
+    --secondary-color: #2a5298;
+    --accent-color: #00b4d8;
+    --dark-bg: #0f172a;
+    --light-bg: #f8fafc;
+    --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 5px -1px rgba(0, 0, 0, 0.03);
+    --hover-shadow: 0 10px 25px -5px rgba(30, 60, 114, 0.15), 0 8px 16px -6px rgba(30, 60, 114, 0.1);
+    --sidebar-width: 260px;
+}
+
+body {
+    background-color: var(--light-bg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #334155;
+    overflow-x: hidden;
+}
+
+/* Base Layout Structure */
+#wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+#sidebar {
+    min-width: var(--sidebar-width);
+    max-width: var(--sidebar-width);
+    background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: #fff;
+    transition: all 0.3s;
+    min-height: 100vh;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+#sidebar .sidebar-header {
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+}
+
+#sidebar ul li a {
+    padding: 14px 24px;
+    font-size: 0.95rem;
+    display: block;
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    transition: all 0.25s ease;
+    border-left: 4px solid transparent;
+}
+
+#sidebar ul li a:hover, #sidebar ul li.active > a {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+    border-left-color: var(--accent-color);
+}
+
+#sidebar ul li a i {
+    margin-right: 12px;
+    width: 20px;
+    text-align: center;
+}
+
+#content {
+    width: 100%;
+    padding: 30px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+/* Custom Cards */
+.custom-card {
+    background: #fff;
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+}
+
+.custom-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--hover-shadow);
+}
+
+.card-kpi {
+    border-left: 5px solid var(--primary-color);
+}
+
+.kpi-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+}
+
+.kpi-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-top: 4px;
+}
+
+/* Custom Badges (Status Badge customization) */
+.custom-badge {
+    padding: 6px 12px;
+    font-weight: 600;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* Table Enhancements */
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    background: #fff;
+}
+
+.custom-table th {
+    background-color: #f1f5f9;
+    color: #475569;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 16px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.custom-table td {
+    padding: 16px;
+    vertical-align: middle;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Authentication Page Container */
+.auth-container {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.auth-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 440px;
+    padding: 40px;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-header h2 {
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+/* Buttons and Inputs */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.25s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    transform: translateY(-1px);
+}
+
+.form-control, .form-select {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
+}
+
+/* Error Restricted access */
+.restricted-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.restricted-card {
+    text-align: center;
+    max-width: 500px;
+    padding: 40px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+}
+
+.restricted-icon {
+    font-size: 5rem;
+    color: #ef4444;
+    margin-bottom: 20px;
+}
+
+/* Responsive sidebar */
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: calc(-1 * var(--sidebar-width));
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+    #content {
+        padding: 15px;
+    }
+}
+
+/* Custom Utility Classes to avoid Inline Styles */
+.prop-card-img {
+    height: 180px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.prop-detail-img {
+    height: 300px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.detail-img-icon {
+    font-size: 5rem;
+}
+
+.agent-avatar {
+    width: 55px;
+    height: 55px;
+}
+
+.card-kpi-primary {
+    border-left-color: #1e3c72 !important;
+}
+
+.card-kpi-danger {
+    border-left-color: #ef4444 !important;
+}
+
+.card-kpi-success {
+    border-left-color: #10b981 !important;
+}
+
+.card-kpi-warning {
+    border-left-color: #f59e0b !important;
+}
+
+.chart-container {
+    position: relative;
+    height: 260px;
+}
+

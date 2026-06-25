@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Inmueble - Inmobiliaria TEM742{% endblock %}
+{% block header_title %}Editar Inmueble{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <div class="card custom-card border-0">
+            <div class="card-body p-5">
+                <h4 class="fw-bold mb-4 text-primary"><i class="fa-solid fa-pen-to-square me-2"></i>Modificar Propiedad</h4>
+                
+                <form action="{{ url_for('propiedades.edit_propiedad', id=propiedad.id) }}" method="POST">
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
+                            <label for="titulo" class="form-label fw-semibold">Título del Inmueble *</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" required value="{{ propiedad.titulo }}" placeholder="Ej. Hermosa casa residencial">
+                        </div>
+                        
+                        <div class="col-12 col-md-4">
+                            <label for="precio" class="form-label fw-semibold">Precio (Bs.) *</label>
+                            <input type="number" step="0.01" class="form-control" id="precio" name="precio" required value="{{ propiedad.precio }}" placeholder="Ej. 125000">
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <label for="accion" class="form-label fw-semibold">Acción *</label>
+                            <select class="form-select" id="accion" name="accion" required>
+                                <option value="Venta" {% if propiedad.accion == 'Venta' %}selected{% endif %}>Venta</option>
+                                <option value="Alquiler" {% if propiedad.accion == 'Alquiler' %}selected{% endif %}>Alquiler</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-12 col-md-4">
+                            <label for="tipo_id" class="form-label fw-semibold">Tipo de Propiedad *</label>
+                            <select class="form-select" id="tipo_id" name="tipo_id" required>
+                                {% for tipo in tipos %}
+                                    <option value="{{ tipo.id }}" {% if propiedad.tipo_id == tipo.id %}selected{% endif %}>{{ tipo.nombre_tipo }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="direccion" class="form-label fw-semibold">Dirección Física *</label>
+                            <input type="text" class="form-control" id="direccion" name="direccion" required value="{{ propiedad.direccion }}" placeholder="Calle, Número, Zona, Ciudad">
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="descripcion" class="form-label fw-semibold">Descripción del Inmueble</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Describe detalladamente las características del inmueble...">{{ propiedad.descripcion or '' }}</textarea>
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <label for="propietario_id" class="form-label fw-semibold">Propietario *</label>
+                            <select class="form-select" id="propietario_id" name="propietario_id" required>
+                                {% for prop in propietarios %}
+                                    <option value="{{ prop.id }}" {% if propiedad.propietario_id == prop.id %}selected{% endif %}>{{ prop.nombre }} (CI: {{ prop.ci_nit }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <label for="agente_id" class="form-label fw-semibold">Agente Asignado *</label>
+                            <select class="form-select" id="agente_id" name="agente_id" required>
+                                {% for ag in agentes %}
+                                    <option value="{{ ag.id }}" {% if propiedad.agente_id == ag.id %}selected{% endif %}>{{ ag.nombre_completo }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <label for="estado_id" class="form-label fw-semibold">Estado Actual *</label>
+                            <select class="form-select" id="estado_id" name="estado_id" required>
+                                {% for est in estados %}
+                                    <option value="{{ est.id }}" {% if propiedad.estado_id == est.id %}selected{% endif %}>{{ est.nombre_estado }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end gap-3 pt-3 border-top">
+                        <a href="{{ url_for('propiedades.list_propiedades') }}" class="btn btn-outline-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-2"></i>Actualizar Inmueble</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Inmobiliaria TEM742{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h4 class="mb-0 text-white"><i class="fa-solid fa-hotel me-2"></i>TEM742</h4>
+                <small class="text-white-50">Sistema Inmobiliario</small>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li class="{% if request.blueprint == 'propiedades' and request.endpoint != 'propiedades.create_propiedad' %}active{% endif %}">
+                    <a href="{{ url_for('propiedades.list_propiedades') }}">
+                        <i class="fa-solid fa-house-chimney"></i> Catálogo
+                    </a>
+                </li>
+                {% if current_user.is_authenticated and current_user.rol.nombre_rol in ['Administrador', 'Agente'] %}
+                <li class="{% if request.endpoint == 'propiedades.create_propiedad' %}active{% endif %}">
+                    <a href="{{ url_for('propiedades.create_propiedad') }}">
+                        <i class="fa-solid fa-plus"></i> Publicar Inmueble
+                    </a>
+                </li>
+                <li class="{% if request.blueprint == 'dashboard' %}active{% endif %}">
+                    <a href="{{ url_for('dashboard.index') }}">
+                        <i class="fa-solid fa-chart-line"></i> Dashboard
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            
+            <div class="p-3 mt-5 border-top border-secondary text-center">
+                {% if current_user.is_authenticated %}
+                    <p class="small mb-1 text-white-50"><i class="fa-solid fa-user me-1"></i> {{ current_user.nombre_completo }}</p>
+                    <span class="badge bg-light text-dark mb-3">{{ current_user.rol.nombre_rol }}</span>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-light btn-sm w-100"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-light btn-sm w-100 mb-2"><i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light btn-sm w-100"><i class="fa-solid fa-user-plus"></i> Registrarse</a>
+                {% endif %}
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+            <!-- Top Navbar for Mobile Toggle & Flash Messages -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-white rounded-3 shadow-sm mb-4 px-4 py-3">
+                <div class="container-fluid p-0">
+                    <button type="button" id="sidebarCollapse" class="btn btn-primary d-md-none me-3">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <h5 class="m-0 font-weight-bold text-primary">
+                        {% block header_title %}Panel Principal{% endblock %}
+                    </h5>
+                </div>
+            </nav>
+
+            <!-- Flash Alert Container (Bootstrap alert-dismissible) -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm mb-4" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Main block content -->
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (bundle includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script>
+        // Sidebar responsive toggle
+        document.getElementById('sidebarCollapse').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
