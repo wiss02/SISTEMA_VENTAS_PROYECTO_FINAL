@@ -16,17 +16,22 @@
 </head>
 <body>
     <div id="wrapper">
+        <!-- Sidebar Overlay (mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
         <!-- Sidebar -->
         <nav id="sidebar">
             <div class="sidebar-header">
-                <h4 class="mb-0 text-white"><i class="fa-solid fa-hotel me-2"></i>TEM742</h4>
-                <small class="text-white-50">Sistema Inmobiliario</small>
+                <h4 class="mb-0 text-white"><i class="fa-solid fa-building-columns me-2"></i>TEM742</h4>
+                <small class="text-white-50">Gestión Inmobiliaria</small>
             </div>
 
             <ul class="list-unstyled components">
-                <li class="{% if request.blueprint == 'propiedades' and request.endpoint != 'propiedades.create_propiedad' %}active{% endif %}">
+                <!-- SECCIÓN: CATÁLOGO -->
+                <span class="sidebar-section-title">Catálogo</span>
+                <li class="{% if request.blueprint == 'propiedades' and request.endpoint == 'propiedades.list_propiedades' %}active{% endif %}">
                     <a href="{{ url_for('propiedades.list_propiedades') }}">
-                        <i class="fa-solid fa-house-chimney"></i> Catálogo
+                        <i class="fa-solid fa-house-chimney"></i> Inmuebles
                     </a>
                 </li>
                 {% if current_user.is_authenticated and current_user.rol.nombre_rol in ['Administrador', 'Agente'] %}
@@ -35,45 +40,84 @@
                         <i class="fa-solid fa-plus"></i> Publicar Inmueble
                     </a>
                 </li>
+                {% endif %}
+
+                {% if current_user.is_authenticated and current_user.rol.nombre_rol in ['Administrador', 'Agente'] %}
+                <!-- SECCIÓN: OPERACIONES -->
+                <span class="sidebar-section-title">Operaciones</span>
+                <li class="{% if request.blueprint == 'visitas' %}active{% endif %}">
+                    <a href="{{ url_for('visitas.list_visitas') }}">
+                        <i class="fa-solid fa-calendar-check"></i> Visitas
+                    </a>
+                </li>
+                <li class="{% if request.blueprint == 'contratos' %}active{% endif %}">
+                    <a href="{{ url_for('contratos.list_contratos') }}">
+                        <i class="fa-solid fa-file-signature"></i> Contratos
+                    </a>
+                </li>
+                <li class="{% if request.blueprint == 'propietarios' %}active{% endif %}">
+                    <a href="{{ url_for('propietarios.list_propietarios') }}">
+                        <i class="fa-solid fa-address-book"></i> Propietarios
+                    </a>
+                </li>
+
+                <!-- SECCIÓN: ANALÍTICA -->
+                <span class="sidebar-section-title">Analítica</span>
                 <li class="{% if request.blueprint == 'dashboard' %}active{% endif %}">
                     <a href="{{ url_for('dashboard.index') }}">
                         <i class="fa-solid fa-chart-line"></i> Dashboard
                     </a>
                 </li>
+                <li class="{% if request.blueprint == 'api' %}active{% endif %}">
+                    <a href="{{ url_for('api.api_docs') }}">
+                        <i class="fa-solid fa-code"></i> API REST
+                    </a>
+                </li>
                 {% endif %}
             </ul>
-            
-            <div class="p-3 mt-5 border-top border-secondary text-center">
+
+            <div class="sidebar-footer">
                 {% if current_user.is_authenticated %}
-                    <p class="small mb-1 text-white-50"><i class="fa-solid fa-user me-1"></i> {{ current_user.nombre_completo }}</p>
-                    <span class="badge bg-light text-dark mb-3">{{ current_user.rol.nombre_rol }}</span>
-                    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-light btn-sm w-100"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <div class="bg-white bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width:32px;height:32px;">
+                            <i class="fa-solid fa-user text-white small"></i>
+                        </div>
+                        <div>
+                            <p class="small mb-0 text-white" style="line-height:1.2;">{{ current_user.nombre_completo }}</p>
+                            <span class="badge bg-light text-dark" style="font-size:0.62rem;">{{ current_user.rol.nombre_rol }}</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-light btn-sm w-100 mt-1">
+                        <i class="fa-solid fa-right-from-bracket me-1"></i>Cerrar Sesión
+                    </a>
                 {% else %}
-                    <a href="{{ url_for('auth.login') }}" class="btn btn-light btn-sm w-100 mb-2"><i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión</a>
-                    <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light btn-sm w-100"><i class="fa-solid fa-user-plus"></i> Registrarse</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-light btn-sm w-100 mb-2">
+                        <i class="fa-solid fa-right-to-bracket me-1"></i>Iniciar Sesión
+                    </a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light btn-sm w-100">
+                        <i class="fa-solid fa-user-plus me-1"></i>Registrarse
+                    </a>
                 {% endif %}
             </div>
         </nav>
 
         <!-- Page Content -->
         <div id="content">
-            <!-- Top Navbar for Mobile Toggle & Flash Messages -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-white rounded-3 shadow-sm mb-4 px-4 py-3">
-                <div class="container-fluid p-0">
-                    <button type="button" id="sidebarCollapse" class="btn btn-primary d-md-none me-3">
+            <!-- Top Navbar -->
+            <div class="top-navbar">
+                <div class="d-flex align-items-center gap-3">
+                    <button type="button" id="sidebarCollapse" class="btn btn-sm btn-outline-secondary">
                         <i class="fa-solid fa-bars"></i>
                     </button>
-                    <h5 class="m-0 font-weight-bold text-primary">
-                        {% block header_title %}Panel Principal{% endblock %}
-                    </h5>
+                    <h5>{% block header_title %}Panel Principal{% endblock %}</h5>
                 </div>
-            </nav>
+            </div>
 
-            <!-- Flash Alert Container (Bootstrap alert-dismissible) -->
+            <!-- Flash Alert Container -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
-                        <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm mb-4" role="alert">
+                        <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show mb-3" role="alert" style="font-size:0.88rem;">
                             {{ message }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
@@ -86,17 +130,31 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS (bundle includes Popper) -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Chart.js CDN -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
     <script>
-        // Sidebar responsive toggle
-        document.getElementById('sidebarCollapse').addEventListener('click', function () {
-            document.getElementById('sidebar').classList.toggle('active');
-        });
+        // Sidebar toggle
+        const sidebarBtn = document.getElementById('sidebarCollapse');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        if (sidebarBtn) {
+            sidebarBtn.addEventListener('click', function () {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', function () {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
     </script>
     {% block extra_js %}{% endblock %}
 </body>

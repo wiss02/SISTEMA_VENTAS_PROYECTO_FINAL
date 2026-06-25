@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Contratos - Inmobiliaria TEM742{% endblock %}
+{% block header_title %}Gestión de Contratos{% endblock %}
+
+{% block content %}
+<!-- Contadores resumen -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+        <div class="stat-mini">
+            <div class="stat-mini-icon bg-primary bg-opacity-10 text-primary">
+                <i class="fa-solid fa-file-signature"></i>
+            </div>
+            <div>
+                <div class="stat-mini-value">{{ total }}</div>
+                <div class="stat-mini-label">Total Contratos</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="stat-mini">
+            <div class="stat-mini-icon bg-success bg-opacity-10 text-success">
+                <i class="fa-solid fa-hand-holding-dollar"></i>
+            </div>
+            <div>
+                <div class="stat-mini-value">{{ "{:,.2f}".format(total_compraventa) }} Bs.</div>
+                <div class="stat-mini-label">Compraventa</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="stat-mini">
+            <div class="stat-mini-icon bg-warning bg-opacity-10 text-warning">
+                <i class="fa-solid fa-key"></i>
+            </div>
+            <div>
+                <div class="stat-mini-value">{{ "{:,.2f}".format(total_arrendamiento) }} Bs.</div>
+                <div class="stat-mini-label">Arrendamiento</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros + Botón Crear -->
+<div class="card custom-card border-0 mb-4">
+    <div class="card-body p-3">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <form method="GET" action="{{ url_for('contratos.list_contratos') }}" class="d-flex gap-2 align-items-center">
+                <select class="form-select form-select-sm" name="tipo" style="width:auto;">
+                    <option value="">Todos los tipos</option>
+                    <option value="Compraventa" {% if tipo_filtro == 'Compraventa' %}selected{% endif %}>Compraventa</option>
+                    <option value="Arrendamiento" {% if tipo_filtro == 'Arrendamiento' %}selected{% endif %}>Arrendamiento</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary"><i class="fa-solid fa-filter me-1"></i>Filtrar</button>
+                {% if tipo_filtro %}
+                    <a href="{{ url_for('contratos.list_contratos') }}" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-broom me-1"></i>Limpiar</a>
+                {% endif %}
+            </form>
+            <a href="{{ url_for('contratos.create_contrato') }}" class="btn btn-sm btn-primary">
+                <i class="fa-solid fa-plus me-1"></i>Nuevo Contrato
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de Contratos -->
+{% if contratos %}
+<div class="card custom-card border-0">
+    <div class="table-responsive">
+        <table class="table custom-table mb-0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Fecha de Firma</th>
+                    <th>Propiedad</th>
+                    <th>Cliente</th>
+                    <th>Tipo</th>
+                    <th class="text-end">Monto Final</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contrato in contratos %}
+                <tr>
+                    <td class="text-muted">{{ contrato.id }}</td>
+                    <td>
+                        <i class="fa-regular fa-calendar me-1 text-muted"></i>
+                        {{ contrato.fecha_firma.strftime('%d/%m/%Y') }}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('propiedades.detail_propiedad', id=contrato.propiedad.id) }}" class="fw-semibold">
+                            {{ contrato.propiedad.titulo|truncate(30) }}
+                        </a>
+                    </td>
+                    <td>{{ contrato.cliente.nombre_completo }}</td>
+                    <td>
+                        <span class="badge custom-badge {% if contrato.tipo_contrato == 'Compraventa' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                            {{ contrato.tipo_contrato }}
+                        </span>
+                    </td>
+                    <td class="text-end fw-bold">{{ "{:,.2f}".format(contrato.monto_final) }} Bs.</td>
+                    <td class="text-end">
+                        <div class="d-flex gap-1 justify-content-end">
+                            <a href="{{ url_for('contratos.detail_contrato', id=contrato.id) }}" class="btn btn-sm btn-outline-primary" title="Ver detalle">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            {% if current_user.rol.nombre_rol == 'Administrador' %}
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-action="{{ url_for('contratos.delete_contrato', id=contrato.id) }}" title="Eliminar">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="card custom-card border-0">
+    <div class="empty-state">
+        <i class="fa-solid fa-file-circle-xmark"></i>
+        <h5>No hay contratos registrados</h5>
+        <p>Registra el primer contrato de compraventa o arrendamiento.</p>
+        <a href="{{ url_for('contratos.create_contrato') }}" class="btn btn-primary btn-sm mt-3"><i class="fa-solid fa-plus me-1"></i>Nuevo Contrato</a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Modal Eliminar -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-danger text-white border-0 py-3">
+                <h5 class="modal-title fw-bold"><i class="fa-solid fa-circle-exclamation me-2"></i>Confirmar Eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <i class="fa-solid fa-trash-can text-danger fs-1 mb-3"></i>
+                <h5 class="fw-bold mb-2">¿Eliminar este contrato?</h5>
+                <p class="text-muted small mb-0">Esta acción es irreversible y eliminará permanentemente el contrato del sistema.</p>
+            </div>
+            <div class="modal-footer bg-light border-0 py-3 d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="POST" action="">
+                    <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash me-2"></i>Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const deleteModal = document.getElementById('deleteModal');
+    if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const actionUrl = button.getAttribute('data-bs-action');
+            deleteModal.querySelector('#deleteForm').setAttribute('action', actionUrl);
+        });
+    }
+</script>
+{% endblock %}

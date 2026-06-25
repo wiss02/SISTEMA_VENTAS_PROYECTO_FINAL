@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Agendar Visita - Inmobiliaria TEM742{% endblock %}
+{% block header_title %}Agendar Nueva Visita{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-7">
+        <div class="card custom-card border-0">
+            <div class="card-body p-5">
+                <h4 class="fw-bold mb-4 text-primary"><i class="fa-solid fa-calendar-plus me-2"></i>Programar Visita</h4>
+
+                <form action="{{ url_for('visitas.create_visita') }}" method="POST">
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
+                            <label for="propiedad_id" class="form-label fw-semibold">Propiedad a Visitar *</label>
+                            <select class="form-select" id="propiedad_id" name="propiedad_id" required>
+                                <option value="" disabled selected>Selecciona un inmueble...</option>
+                                {% for prop in propiedades %}
+                                    <option value="{{ prop.id }}">{{ prop.titulo }} — {{ prop.direccion|truncate(40) }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="cliente_id" class="form-label fw-semibold">Cliente *</label>
+                            <select class="form-select" id="cliente_id" name="cliente_id" required>
+                                <option value="" disabled selected>Selecciona un cliente...</option>
+                                {% for cli in clientes %}
+                                    <option value="{{ cli.id }}">{{ cli.nombre_completo }} ({{ cli.correo }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="fecha_hora" class="form-label fw-semibold">Fecha y Hora *</label>
+                            <input type="datetime-local" class="form-control" id="fecha_hora" name="fecha_hora" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="observaciones" class="form-label fw-semibold">Observaciones</label>
+                            <textarea class="form-control" id="observaciones" name="observaciones" rows="3" placeholder="Notas adicionales sobre la visita..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 pt-3 border-top">
+                        <a href="{{ url_for('visitas.list_visitas') }}" class="btn btn-outline-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-2"></i>Programar Visita</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Contrato - Inmobiliaria TEM742{% endblock %}
+{% block header_title %}Registrar Contrato{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-7">
+        <div class="card custom-card border-0">
+            <div class="card-body p-5">
+                <h4 class="fw-bold mb-4 text-primary"><i class="fa-solid fa-file-contract me-2"></i>Formalizar Contrato</h4>
+
+                <form action="{{ url_for('contratos.create_contrato') }}" method="POST">
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
+                            <label for="propiedad_id" class="form-label fw-semibold">Propiedad *</label>
+                            <select class="form-select" id="propiedad_id" name="propiedad_id" required>
+                                <option value="" disabled selected>Selecciona un inmueble...</option>
+                                {% for prop in propiedades %}
+                                    <option value="{{ prop.id }}">{{ prop.titulo }} — {{ "{:,.2f}".format(prop.precio) }} Bs.</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="cliente_id" class="form-label fw-semibold">Cliente *</label>
+                            <select class="form-select" id="cliente_id" name="cliente_id" required>
+                                <option value="" disabled selected>Selecciona un cliente...</option>
+                                {% for cli in clientes %}
+                                    <option value="{{ cli.id }}">{{ cli.nombre_completo }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="tipo_contrato" class="form-label fw-semibold">Tipo de Contrato *</label>
+                            <select class="form-select" id="tipo_contrato" name="tipo_contrato" required>
+                                <option value="" disabled selected>Selecciona tipo...</option>
+                                <option value="Compraventa">Compraventa</option>
+                                <option value="Arrendamiento">Arrendamiento</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="monto_final" class="form-label fw-semibold">Monto Final (Bs.) *</label>
+                            <input type="number" step="0.01" class="form-control" id="monto_final" name="monto_final" required placeholder="Ej. 95000.00">
+                        </div>
+
+                        <div class="col-12">
+                            <label for="clausulas" class="form-label fw-semibold">Cláusulas del Contrato</label>
+                            <textarea class="form-control" id="clausulas" name="clausulas" rows="5" placeholder="Redacta las cláusulas o condiciones del contrato..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 pt-3 border-top">
+                        <a href="{{ url_for('contratos.list_contratos') }}" class="btn btn-outline-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-2"></i>Registrar Contrato</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

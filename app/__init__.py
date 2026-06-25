@@ -29,6 +29,18 @@ def create_app(config_class=Config):
     from app.modulos.dashboard.routes import bp as dashboard_bp
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
 
+    from app.modulos.visitas.routes import bp as visitas_bp
+    app.register_blueprint(visitas_bp, url_prefix='/visitas')
+
+    from app.modulos.contratos.routes import bp as contratos_bp
+    app.register_blueprint(contratos_bp, url_prefix='/contratos')
+
+    from app.modulos.propietarios.routes import bp as propietarios_bp
+    app.register_blueprint(propietarios_bp, url_prefix='/propietarios')
+
+    from app.modulos.api.routes import bp as api_bp
+    app.register_blueprint(api_bp, url_prefix='/api')
+
     @app.route('/')
     def index():
         return redirect(url_for('propiedades.list_propiedades'))

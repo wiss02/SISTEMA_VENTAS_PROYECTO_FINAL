@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Propietario - Inmobiliaria TEM742{% endblock %}
+{% block header_title %}Editar Propietario{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-6">
+        <div class="card custom-card border-0">
+            <div class="card-body p-5">
+                <h4 class="fw-bold mb-4 text-primary"><i class="fa-solid fa-pen-to-square me-2"></i>Editar Propietario</h4>
+
+                <form action="{{ url_for('propietarios.edit_propietario', id=propietario.id) }}" method="POST">
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
+                            <label for="nombre" class="form-label fw-semibold">Nombre Completo *</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required value="{{ propietario.nombre }}">
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="ci_nit" class="form-label fw-semibold">CI / NIT *</label>
+                            <input type="text" class="form-control" id="ci_nit" name="ci_nit" required value="{{ propietario.ci_nit }}">
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="telefono" class="form-label fw-semibold">Teléfono *</label>
+                            <input type="text" class="form-control" id="telefono" name="telefono" required value="{{ propietario.telefono }}">
+                        </div>
+
+                        <div class="col-12">
+                            <label for="correo" class="form-label fw-semibold">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="correo" name="correo" value="{{ propietario.correo or '' }}">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 pt-3 border-top">
+                        <a href="{{ url_for('propietarios.list_propietarios') }}" class="btn btn-outline-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

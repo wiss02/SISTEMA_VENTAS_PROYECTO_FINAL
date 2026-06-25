@@ -90,9 +90,9 @@ La base de datos está normalizada en **Tercera Forma Normal (3FN)** para garant
 
 | Rol | Usuario (`username`) | Contraseña | Privilegios |
 | :--- | :--- | :--- | :--- |
-| **Administrador** | `admin` | **`admin123`** | **Amo y Señor** (Acceso total, CRUD, Dashboard) |
-| **Agente** | `agente` | **`agente123`** | CRUD de catálogo y visualización de analíticas |
-| **Cliente** | `cliente` | **`cliente123`** | Consulta pública de inmuebles en catálogo |
+| **Administrador** | `wilson` | **`admin123`** | **Amo y Señor** (wilsonrenelp@gmail.com) |
+| **Agente** | `carlos.agente` | **`agente123`** | CRUD de catálogo y visualización de analíticas |
+| **Cliente** | `ana.cliente` | **`cliente123`** | Consulta pública de inmuebles en catálogo |
 
 ---
 
@@ -111,7 +111,10 @@ La base de datos está normalizada en **Tercera Forma Normal (3FN)** para garant
 
 ---
 
-## 📝 7. Siguientes Pasos Pendientes
-* **Módulo de Visitas**: Programar la interfaz visual en frontend para agendar y cancelar citas (`visitas`).
-* **Módulo de Contratos**: Añadir el flujo para que un Agente pueda formalizar un contrato y rellenar las cláusulas.
-* **Migración a Producción**: Cambiar la configuración en `config.py` de SQLite a PostgreSQL para el despliegue final en la nube (Render).
+## ✅ 7. Estado del Proyecto
+* **Módulo de Visitas**: Completado (CRUD, filtros, cambio de estados).
+* **Módulo de Contratos**: Completado (Registro, detalle, resumen estadístico).
+* **Módulo de Propietarios**: Completado (Gestión de dueños de inmuebles, validación CI/NIT).
+* **Dashboard Analítico**: Completado (Múltiples métricas, gráficos con Chart.js y actividad reciente).
+* **API REST**: Completada (Endpoints JSON protegidos con RBAC y página de documentación).
+* **Migración a Producción**: Pendiente cambiar la configuración en `config.py` de SQLite a PostgreSQL para el despliegue final en la nube (Render).

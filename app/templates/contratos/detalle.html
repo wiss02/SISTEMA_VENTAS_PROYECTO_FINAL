@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Contrato #{{ contrato.id }} - Inmobiliaria TEM742{% endblock %}
+{% block header_title %}Detalle del Contrato{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-8">
+        <div class="card custom-card border-0 mb-4">
+            <div class="card-body p-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold text-dark mb-0">
+                        <i class="fa-solid fa-file-signature text-primary me-2"></i>Contrato #{{ contrato.id }}
+                    </h4>
+                    <span class="badge custom-badge fs-6 {% if contrato.tipo_contrato == 'Compraventa' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                        {{ contrato.tipo_contrato }}
+                    </span>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-12 col-md-6">
+                        <div class="contract-field">
+                            <div class="contract-field-label">Propiedad</div>
+                            <div class="contract-field-value">
+                                <a href="{{ url_for('propiedades.detail_propiedad', id=contrato.propiedad.id) }}">
+                                    {{ contrato.propiedad.titulo }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="contract-field">
+                            <div class="contract-field-label">Dirección</div>
+                            <div class="contract-field-value">{{ contrato.propiedad.direccion }}</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="contract-field">
+                            <div class="contract-field-label">Cliente</div>
+                            <div class="contract-field-value">{{ contrato.cliente.nombre_completo }}</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="contract-field">
+                            <div class="contract-field-label">Correo del Cliente</div>
+                            <div class="contract-field-value">{{ contrato.cliente.correo }}</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="contract-field">
+                            <div class="contract-field-label">Fecha de Firma</div>
+                            <div class="contract-field-value">{{ contrato.fecha_firma.strftime('%d/%m/%Y a las %H:%M') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="contract-field">
+                            <div class="contract-field-label">Monto Final</div>
+                            <div class="contract-field-value fs-4 fw-bold text-primary">{{ "{:,.2f}".format(contrato.monto_final) }} Bs.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-list-check me-2 text-primary"></i>Cláusulas</h5>
+                <div class="bg-light rounded-3 p-4">
+                    <p class="mb-0" style="white-space:pre-wrap;">{{ contrato.clausulas or 'No se registraron cláusulas para este contrato.' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <!-- Resumen del inmueble -->
+        <div class="card custom-card border-0 mb-4">
+            <div class="card-body p-4">
+                <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-building text-primary me-2"></i>Inmueble Asociado</h6>
+                <p class="mb-1"><strong>Tipo:</strong> {{ contrato.propiedad.tipo_propiedad.nombre_tipo }}</p>
+                <p class="mb-1"><strong>Acción:</strong> {{ contrato.propiedad.accion }}</p>
+                <p class="mb-1"><strong>Estado:</strong>
+                    <span class="badge custom-badge
+                        {% if contrato.propiedad.estado.nombre_estado == 'Disponible' %}bg-success
+                        {% elif contrato.propiedad.estado.nombre_estado == 'Vendida' %}bg-danger
+                        {% elif contrato.propiedad.estado.nombre_estado == 'Alquilada' %}bg-warning text-dark
+                        {% else %}bg-info{% endif %}">
+                        {{ contrato.propiedad.estado.nombre_estado }}
+                    </span>
+                </p>
+                <p class="mb-0"><strong>Precio Catálogo:</strong> {{ "{:,.2f}".format(contrato.propiedad.precio) }} Bs.</p>
+            </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="d-grid gap-2">
+            <a href="{{ url_for('contratos.list_contratos') }}" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-arrow-left me-2"></i>Volver a Contratos
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
