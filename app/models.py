@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+# pyrefly: ignore [missing-import]
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -116,6 +117,7 @@ class Propiedad(db.Model):
     direccion = db.Column(db.String(255), nullable=False)
     accion = db.Column(db.String(20), nullable=False)  # Alquiler o Venta
     fecha_registro = db.Column(db.DateTime, default=datetime.utcnow)
+    imagen_url = db.Column(db.String(255), nullable=True)
     
     # Foreign Keys
     tipo_id = db.Column(db.Integer, db.ForeignKey('tipos_propiedad.id', ondelete='RESTRICT'), nullable=False)
@@ -127,7 +129,7 @@ class Propiedad(db.Model):
     visitas = db.relationship('Visita', backref='propiedad', lazy=True, cascade='all, delete-orphan')
     contratos = db.relationship('Contrato', backref='propiedad', lazy=True, cascade='all, delete-orphan')
 
-    def __init__(self, titulo, precio, direccion, accion, tipo_id, propietario_id, agente_id, estado_id, descripcion=None):
+    def __init__(self, titulo, precio, direccion, accion, tipo_id, propietario_id, agente_id, estado_id, descripcion=None, imagen_url=None):
         self.titulo = titulo
         self.precio = precio
         self.direccion = direccion
@@ -137,6 +139,7 @@ class Propiedad(db.Model):
         self.agente_id = agente_id
         self.estado_id = estado_id
         self.descripcion = descripcion
+        self.imagen_url = imagen_url
 
     def __repr__(self):
         return f'<Propiedad {self.titulo}>'

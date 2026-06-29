@@ -8,8 +8,10 @@
     <div class="col-12 col-lg-8">
         <!-- Detalle principal -->
         <div class="card custom-card border-0 mb-4">
-            <div class="position-relative bg-light text-center border-bottom d-flex align-items-center justify-content-center prop-detail-img">
-                <i class="fa-regular fa-image text-muted detail-img-icon"></i>
+            <div class="position-relative bg-light text-center border-bottom d-flex align-items-center justify-content-center prop-detail-img" {% if propiedad.imagen_url %}style="background: url('{{ propiedad.imagen_url }}') center/cover no-repeat;"{% endif %}>
+                {% if not propiedad.imagen_url %}
+                <i class="fa-regular fa-image text-muted detail-img-icon" style="color: rgba(255,255,255,0.6) !important;"></i>
+                {% endif %}
                 <!-- Badge de Acción (Alquiler o Venta) -->
                 <span class="position-absolute top-0 start-0 m-4 badge bg-dark custom-badge fs-6">
                     {{ propiedad.accion }}
@@ -93,12 +95,55 @@
             <a href="{{ url_for('propiedades.list_propiedades') }}" class="btn btn-outline-secondary w-100">
                 <i class="fa-solid fa-arrow-left me-2"></i>Volver al Catálogo
             </a>
-            {% if current_user.is_authenticated and current_user.rol.nombre_rol in ['Administrador', 'Agente'] %}
+            {% if current_user.is_authenticated %}
+                {% if current_user.rol.nombre_rol in ['Administrador', 'Agente'] %}
                 <a href="{{ url_for('propiedades.edit_propiedad', id=propiedad.id) }}" class="btn btn-primary w-100">
                     <i class="fa-solid fa-pen-to-square me-2"></i>Editar Propiedad
+                </a>
+                {% elif current_user.rol.nombre_rol == 'Cliente' %}
+                <button type="button" class="btn btn-accent w-100 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalVisita">
+                    <i class="fa-solid fa-calendar-check me-2"></i>Solicitar Visita
+                </button>
+                {% endif %}
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="btn btn-accent w-100">
+                    <i class="fa-solid fa-right-to-bracket me-2"></i>Inicia sesión para visitar
                 </a>
             {% endif %}
         </div>
     </div>
 </div>
+
+<!-- Modal para Solicitar Visita -->
+{% if current_user.is_authenticated and current_user.rol.nombre_rol == 'Cliente' %}
+<div class="modal fade" id="modalVisita" tabindex="-1" aria-labelledby="modalVisitaLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: var(--radius-lg);">
+      <div class="modal-header bg-light border-0" style="border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
+        <h5 class="modal-title fw-bold" style="color: var(--color-brand)" id="modalVisitaLabel"><i class="fa-solid fa-calendar-check me-2"></i>Solicitar Visita</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{{ url_for('visitas.solicitar_visita', propiedad_id=propiedad.id) }}" method="POST">
+          <div class="modal-body p-4">
+            <p class="text-muted small mb-4">Estás solicitando agendar una visita presencial para:<br><strong class="text-dark">{{ propiedad.titulo }}</strong></p>
+            
+            <div class="mb-3">
+                <label for="fecha_hora" class="form-label fw-bold small text-muted text-uppercase">Fecha y Hora Propuesta</label>
+                <input type="datetime-local" class="form-control" id="fecha_hora" name="fecha_hora" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="observaciones" class="form-label fw-bold small text-muted text-uppercase">Observaciones (Opcional)</label>
+                <textarea class="form-control" id="observaciones" name="observaciones" rows="3" placeholder="¿Tienes alguna pregunta o disponibilidad específica?"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer border-0 bg-light" style="border-radius: 0 0 var(--radius-lg) var(--radius-lg);">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-accent">Confirmar Solicitud</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}

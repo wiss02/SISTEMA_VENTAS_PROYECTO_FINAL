@@ -110,3 +110,36 @@ def delete_visita(id):
     db.session.commit()
     flash('Visita eliminada exitosamente.', 'success')
     return redirect(url_for('visitas.list_visitas'))
+
+@bp.route('/solicitar/<int:propiedad_id>', methods=['POST'])
+@login_required
+@roles_permitidos(['Cliente'])
+def solicitar_visita(propiedad_id):
+    propiedad = Propiedad.query.get_or_404(propiedad_id)
+    
+    fecha_str = request.form.get('fecha_hora')
+    observaciones = request.form.get('observaciones', '').strip()
+    
+    if not fecha_str:
+        flash('Debes seleccionar una fecha y hora.', 'danger')
+        return redirect(url_for('propiedades.detail_propiedad', id=propiedad_id))
+        
+    try:
+        fecha_hora = datetime.strptime(fecha_str, '%Y-%m-%dT%H:%M')
+    except ValueError:
+        flash('Formato de fecha inválido.', 'danger')
+        return redirect(url_for('propiedades.detail_propiedad', id=propiedad_id))
+        
+    nueva_visita = Visita(
+        fecha_hora=fecha_hora,
+        propiedad_id=propiedad.id,
+        cliente_id=current_user.id,
+        estado_visita='Programada',
+        observaciones=observaciones if observaciones else 'Solicitada vía web por el cliente.'
+    )
+    
+    db.session.add(nueva_visita)
+    db.session.commit()
+    
+    flash('¡Tu solicitud de visita ha sido enviada exitosamente al agente encargado!', 'success')
+    return redirect(url_for('propiedades.detail_propiedad', id=propiedad_id))

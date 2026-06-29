@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required
 from app.models import db, Propietario
 from app.modulos.auth.routes import roles_permitidos
@@ -60,6 +60,43 @@ def create_propietario():
         return redirect(url_for('propietarios.list_propietarios'))
 
     return render_template('propietarios/crear.html')
+
+
+@bp.route('/api/crear_rapido', methods=['POST'])
+@login_required
+@roles_permitidos(['Administrador', 'Agente'])
+def api_create_propietario():
+    data = request.get_json()
+    nombre = data.get('nombre', '').strip()
+    telefono = data.get('telefono', '').strip()
+    correo = data.get('correo', '').strip()
+    ci_nit = data.get('ci_nit', '').strip()
+
+    if not nombre or not telefono or not ci_nit:
+        return jsonify({'success': False, 'message': 'Nombre, teléfono y CI/NIT son obligatorios.'}), 400
+
+    existente = Propietario.query.filter_by(ci_nit=ci_nit).first()
+    if existente:
+        return jsonify({'success': False, 'message': 'Ya existe un propietario con ese CI/NIT.'}), 400
+
+    nuevo = Propietario(
+        nombre=nombre,
+        telefono=telefono,
+        ci_nit=ci_nit,
+        correo=correo if correo else None
+    )
+
+    db.session.add(nuevo)
+    db.session.commit()
+    
+    return jsonify({
+        'success': True,
+        'propietario': {
+            'id': nuevo.id,
+            'nombre': nuevo.nombre,
+            'ci_nit': nuevo.ci_nit
+        }
+    })
 
 
 @bp.route('/editar/<int:id>', methods=['GET', 'POST'])

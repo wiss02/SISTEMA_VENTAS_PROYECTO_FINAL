@@ -10,7 +10,7 @@
             <div class="card-body p-5">
                 <h4 class="fw-bold mb-4 text-primary"><i class="fa-solid fa-pen-to-square me-2"></i>Modificar Propiedad</h4>
                 
-                <form action="{{ url_for('propiedades.edit_propiedad', id=propiedad.id) }}" method="POST">
+                <form action="{{ url_for('propiedades.edit_propiedad', id=propiedad.id) }}" method="POST" enctype="multipart/form-data">
                     <div class="row g-3 mb-4">
                         <div class="col-12">
                             <label for="titulo" class="form-label fw-semibold">Título del Inmueble *</label>
@@ -45,17 +45,27 @@
                         </div>
                         
                         <div class="col-12">
+                            <label for="imagen" class="form-label fw-semibold">Fotografía Principal (JPG, PNG) <small class="text-muted fw-normal">- Dejar en blanco para conservar la actual</small></label>
+                            <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                        </div>
+                        
+                        <div class="col-12">
                             <label for="descripcion" class="form-label fw-semibold">Descripción del Inmueble</label>
                             <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Describe detalladamente las características del inmueble...">{{ propiedad.descripcion or '' }}</textarea>
                         </div>
 
                         <div class="col-12 col-md-4">
                             <label for="propietario_id" class="form-label fw-semibold">Propietario *</label>
-                            <select class="form-select" id="propietario_id" name="propietario_id" required>
-                                {% for prop in propietarios %}
-                                    <option value="{{ prop.id }}" {% if propiedad.propietario_id == prop.id %}selected{% endif %}>{{ prop.nombre }} (CI: {{ prop.ci_nit }})</option>
-                                {% endfor %}
-                            </select>
+                            <div class="input-group">
+                                <select class="form-select" id="propietario_id" name="propietario_id" required>
+                                    {% for prop in propietarios %}
+                                        <option value="{{ prop.id }}" {% if propiedad.propietario_id == prop.id %}selected{% endif %}>{{ prop.nombre }} (CI: {{ prop.ci_nit }})</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalNuevoPropietario" title="Crear Nuevo Propietario">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="col-12 col-md-4">
@@ -86,4 +96,108 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Nuevo Propietario -->
+<div class="modal fade" id="modalNuevoPropietario" tabindex="-1" aria-labelledby="modalNuevoPropietarioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title text-primary fw-bold" id="modalNuevoPropietarioLabel"><i class="fa-solid fa-user-plus me-2"></i>Nuevo Propietario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNuevoPropietario">
+                    <div class="mb-3">
+                        <label for="prop_nombre" class="form-label fw-semibold">Nombre Completo *</label>
+                        <input type="text" class="form-control" id="prop_nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="prop_ci" class="form-label fw-semibold">CI / NIT *</label>
+                        <input type="text" class="form-control" id="prop_ci" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="prop_telefono" class="form-label fw-semibold">Teléfono *</label>
+                        <input type="text" class="form-control" id="prop_telefono" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="prop_correo" class="form-label fw-semibold">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="prop_correo">
+                    </div>
+                    <div id="modal-error-msg" class="text-danger small mb-3" style="display: none;"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnGuardarPropietario">Guardar Propietario</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btnGuardar = document.getElementById('btnGuardarPropietario');
+    const errorMsg = document.getElementById('modal-error-msg');
+    const modalElement = document.getElementById('modalNuevoPropietario');
+    const modal = new bootstrap.Modal(modalElement);
+    
+    btnGuardar.addEventListener('click', function() {
+        const nombre = document.getElementById('prop_nombre').value.trim();
+        const ci = document.getElementById('prop_ci').value.trim();
+        const telefono = document.getElementById('prop_telefono').value.trim();
+        const correo = document.getElementById('prop_correo').value.trim();
+        
+        if (!nombre || !ci || !telefono) {
+            errorMsg.textContent = 'Por favor, completa los campos obligatorios.';
+            errorMsg.style.display = 'block';
+            return;
+        }
+        
+        btnGuardar.disabled = true;
+        btnGuardar.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
+        
+        fetch('{{ url_for("propietarios.api_create_propietario") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nombre: nombre,
+                ci_nit: ci,
+                telefono: telefono,
+                correo: correo
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Añadir al select
+                const select = document.getElementById('propietario_id');
+                const option = document.createElement('option');
+                option.value = data.propietario.id;
+                option.text = `${data.propietario.nombre} (CI: ${data.propietario.ci_nit})`;
+                select.appendChild(option);
+                select.value = data.propietario.id;
+                
+                // Limpiar y cerrar modal
+                document.getElementById('formNuevoPropietario').reset();
+                errorMsg.style.display = 'none';
+                modal.hide();
+                
+            } else {
+                errorMsg.textContent = data.message || 'Error al guardar el propietario.';
+                errorMsg.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            errorMsg.textContent = 'Error de conexión. Inténtalo de nuevo.';
+            errorMsg.style.display = 'block';
+        })
+        .finally(() => {
+            btnGuardar.disabled = false;
+            btnGuardar.textContent = 'Guardar Propietario';
+        });
+    });
+});
+</script>
 {% endblock %}

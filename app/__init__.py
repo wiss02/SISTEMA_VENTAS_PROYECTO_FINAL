@@ -1,7 +1,7 @@
 from flask import Flask, redirect, url_for, render_template
 from flask_login import LoginManager
 from config import Config
-from app.models import db, Usuario
+from app.models import db, Usuario, TipoPropiedad
 
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
@@ -40,6 +40,14 @@ def create_app(config_class=Config):
 
     from app.modulos.api.routes import bp as api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
+
+    @app.context_processor
+    def inject_tipos():
+        try:
+            tipos_globales = TipoPropiedad.query.all()
+            return dict(tipos_globales=tipos_globales)
+        except Exception:
+            return dict(tipos_globales=[])
 
     @app.route('/')
     def index():

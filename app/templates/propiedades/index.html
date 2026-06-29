@@ -61,8 +61,10 @@
         <div class="col-12 col-md-6 col-lg-4">
             <div class="card custom-card h-100 border-0">
                 <!-- Imagen placeholder de inmueble -->
-                <div class="position-relative bg-light text-center border-bottom d-flex align-items-center justify-content-center prop-card-img">
-                    <i class="fa-regular fa-image text-muted fs-1"></i>
+                <div class="position-relative bg-light text-center border-bottom d-flex align-items-center justify-content-center prop-card-img" {% if propiedad.imagen_url %}style="background: url('{{ propiedad.imagen_url }}') center/cover no-repeat;"{% endif %}>
+                    {% if not propiedad.imagen_url %}
+                    <i class="fa-regular fa-image text-muted fs-1" style="color: rgba(255,255,255,0.6) !important;"></i>
+                    {% endif %}
                     <!-- Badge de Acción (Alquiler / Venta) -->
                     <span class="position-absolute top-0 start-0 m-3 badge bg-dark custom-badge">
                         {{ propiedad.accion }}
