@@ -10,6 +10,22 @@ def seed_database():
         
         # Verificar si ya existen roles en la BD
         if Rol.query.first():
+            # FORZAR ACTUALIZACIÓN DE IMÁGENES EN BD EXISTENTE EN RENDER
+            print("Base de datos ya existe, actualizando imágenes por defecto...")
+            urls = [
+                'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
+                'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80',
+                'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
+                'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80',
+                'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80',
+                'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80',
+                'https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800&q=80'
+            ]
+            propiedades = Propiedad.query.order_by(Propiedad.id).limit(7).all()
+            for i, p in enumerate(propiedades):
+                if not p.imagen_url:
+                    p.imagen_url = urls[i]
+            db.session.commit()
             return
             
         print("Iniciando sembrado de datos de prueba...")
@@ -112,7 +128,8 @@ def seed_database():
             tipo_id=tipo_casa.id,
             propietario_id=prop1.id,
             agente_id=user_agente1.id,
-            estado_id=est_disp.id
+            estado_id=est_disp.id,
+            imagen_url='https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80'
         )
         p2 = Propiedad(
             titulo='Departamento Céntrico 2 Dormitorios',
@@ -123,7 +140,8 @@ def seed_database():
             tipo_id=tipo_depto.id,
             propietario_id=prop2.id,
             agente_id=user_agente1.id,
-            estado_id=est_alq.id
+            estado_id=est_alq.id,
+            imagen_url='https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80'
         )
         p3 = Propiedad(
             titulo='Local Comercial sobre Avenida Principal',
@@ -134,7 +152,8 @@ def seed_database():
             tipo_id=tipo_local.id,
             propietario_id=prop3.id,
             agente_id=user_admin.id,
-            estado_id=est_disp.id
+            estado_id=est_disp.id,
+            imagen_url='https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80'
         )
         p4 = Propiedad(
             titulo='Terreno Amplio en Zona Residencial',
@@ -145,7 +164,8 @@ def seed_database():
             tipo_id=tipo_terreno.id,
             propietario_id=prop1.id,
             agente_id=user_agente2.id,
-            estado_id=est_vend.id
+            estado_id=est_vend.id,
+            imagen_url='https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80'
         )
         p5 = Propiedad(
             titulo='Oficina Ejecutiva en Torre Corporativa',
@@ -156,7 +176,8 @@ def seed_database():
             tipo_id=tipo_oficina.id,
             propietario_id=prop4.id,
             agente_id=user_agente1.id,
-            estado_id=est_disp.id
+            estado_id=est_disp.id,
+            imagen_url='https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80'
         )
         p6 = Propiedad(
             titulo='Casa Familiar con Jardín en Irpavi',
@@ -167,7 +188,8 @@ def seed_database():
             tipo_id=tipo_casa.id,
             propietario_id=prop5.id,
             agente_id=user_agente2.id,
-            estado_id=est_res.id
+            estado_id=est_res.id,
+            imagen_url='https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80'
         )
         p7 = Propiedad(
             titulo='Departamento Estudio Amoblado',
@@ -178,7 +200,8 @@ def seed_database():
             tipo_id=tipo_depto.id,
             propietario_id=prop2.id,
             agente_id=user_agente1.id,
-            estado_id=est_disp.id
+            estado_id=est_disp.id,
+            imagen_url='https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800&q=80'
         )
         db.session.add_all([p1, p2, p3, p4, p5, p6, p7])
         db.session.commit()
