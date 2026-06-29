@@ -262,6 +262,8 @@ def seed_database():
         print(f"  CLIENTE: marco.cliente / cliente123")
         print("-" * 50)
 
+# Ejecutar el sembrado de base de datos siempre (necesario para Gunicorn en Render)
+seed_database()
+
 if __name__ == '__main__':
-    seed_database()
     app.run(debug=True, port=5000)
