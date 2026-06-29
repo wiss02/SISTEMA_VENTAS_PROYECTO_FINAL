@@ -68,11 +68,6 @@
                         <i class="fa-solid fa-chart-line"></i> Dashboard
                     </a>
                 </li>
-                <li class="{% if request.blueprint == 'api' %}active{% endif %}">
-                    <a href="{{ url_for('api.api_docs') }}">
-                        <i class="fa-solid fa-code"></i> API REST
-                    </a>
-                </li>
                 {% endif %}
             </ul>
 
