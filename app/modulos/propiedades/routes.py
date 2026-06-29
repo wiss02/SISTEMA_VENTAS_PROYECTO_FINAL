@@ -1,4 +1,7 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
+from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
+import os
+import uuid
+from werkzeug.utils import secure_filename
 from flask_login import login_required, current_user
 from app.models import db, Propiedad, TipoPropiedad, EstadoPropiedad, Propietario, Usuario, Rol
 from app.modulos.auth.routes import roles_permitidos
@@ -75,6 +78,19 @@ def create_propiedad():
             flash('Todos los campos obligatorios deben completarse.', 'danger')
             return redirect(url_for('propiedades.create_propiedad'))
 
+        imagen = request.files.get('imagen')
+        imagen_url = None
+        if imagen and imagen.filename:
+            filename = secure_filename(imagen.filename)
+            ext = os.path.splitext(filename)[1]
+            unique_filename = f"{uuid.uuid4().hex}{ext}"
+            
+            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+            os.makedirs(upload_folder, exist_ok=True)
+            
+            imagen.save(os.path.join(upload_folder, unique_filename))
+            imagen_url = url_for('static', filename=f'uploads/{unique_filename}')
+
         nueva_propiedad = Propiedad(
             titulo=titulo,
             descripcion=descripcion,
@@ -84,7 +100,8 @@ def create_propiedad():
             tipo_id=tipo_id,
             propietario_id=propietario_id,
             agente_id=agente_id,
-            estado_id=estado_id
+            estado_id=estado_id,
+            imagen_url=imagen_url
         )
 
         db.session.add(nueva_propiedad)
@@ -124,6 +141,18 @@ def edit_propiedad(id):
         if not propiedad.titulo or not propiedad.precio or not propiedad.direccion or not propiedad.accion or not propiedad.tipo_id or not propiedad.propietario_id or not propiedad.agente_id or not propiedad.estado_id:
             flash('Todos los campos obligatorios deben completarse.', 'danger')
             return redirect(url_for('propiedades.edit_propiedad', id=id))
+
+        imagen = request.files.get('imagen')
+        if imagen and imagen.filename:
+            filename = secure_filename(imagen.filename)
+            ext = os.path.splitext(filename)[1]
+            unique_filename = f"{uuid.uuid4().hex}{ext}"
+            
+            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+            os.makedirs(upload_folder, exist_ok=True)
+            
+            imagen.save(os.path.join(upload_folder, unique_filename))
+            propiedad.imagen_url = url_for('static', filename=f'uploads/{unique_filename}')
 
         db.session.commit()
         flash('¡Propiedad actualizada exitosamente!', 'success')
